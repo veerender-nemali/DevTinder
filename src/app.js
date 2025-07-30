@@ -2,17 +2,22 @@ const express = require("express")
 
 const app = express()
 
-app.use("/test", (req, res) => {
-    res.send("Hi from contact page");
+//this method is middlerware for 1st route handler
+app.use("/", (req, res, next) => {
+    next()
 })
 
-app.use("/work", (req, res) => {
-    res.send("Hello from home Hello page");
-})
-
-app.use("/", (req, res) => {
-    res.send("Hi from home page");
-})
+app.get(
+    '/user',
+    //this method is middlerware for 1st route handler
+    (req, res, next) => {
+        console.log('Handling /user route')
+        next()
+    },
+    (req, res, next) => {
+        res.send("1st route handler")
+    }
+)
 
 app.listen(5555, () => {
     console.log("listening on port 5555");
