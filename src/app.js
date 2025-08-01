@@ -1,24 +1,17 @@
 const express = require("express")
+const connectDB = require("./config/database.js")
 
 const app = express()
 
-//this method is middlerware for 1st route handler
-app.use("/", (req, res, next) => {
-    next()
-})
 
-app.get(
-    '/user',
-    //this method is middlerware for 1st route handler
-    (req, res, next) => {
-        console.log('Handling /user route')
-        next()
-    },
-    (req, res, next) => {
-        res.send("1st route handler")
-    }
-)
 
-app.listen(5555, () => {
-    console.log("listening on port 5555");
-})
+connectDB()
+    .then(() => {
+        console.log("Database is now connected")
+
+        app.listen(5555, () => {
+            console.log("listening on port 5555");
+        })
+    }).catch(() => {
+        console.log("Database is not connected")
+    })
