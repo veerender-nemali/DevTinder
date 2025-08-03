@@ -18,6 +18,34 @@ app.post("/signup", async (req, res) => {
     }
 })
 
+app.get("/user",async (req,res)=>{
+    const userEmail = req.body.emailId  //request has come from the user
+
+    try {
+        const user = await User.find({emailId : userEmail})
+        if(user.length === 0){
+            res.status(400).send("User not found!!")
+        }else{
+            res.send(user)
+        }
+    } catch (error) {
+        res.status(400).send("Something went wrong!")
+    }
+
+})
+
+//getting all data from DB
+app.get('/feed', async (req, res) => {
+
+    try {
+        const users = await User.find({})
+        res.send(users)
+    } catch (error) {
+        res.status(400).send("Something went wrong!")
+    }
+
+})
+
 connectDB()
     .then(() => {
         console.log("Database is now connected")
