@@ -12,4 +12,15 @@ const validateSignUpData = (req) => {
     }
 }
 
-module.exports = { validateSignUpData }
+const validateEditProfileData = (req) => {
+    const allowedUpdateFields = ["firstName", "lastName", "about", "skills", "photoUrl"]
+    const fields = req.body
+
+    const isUpdateAllowed = Object.keys(fields).every(field => allowedUpdateFields.includes(field))
+
+    if (!isUpdateAllowed) {
+        throw new Error("Update not allowed")
+    }
+}
+
+module.exports = { validateSignUpData, validateEditProfileData }
