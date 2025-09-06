@@ -3,6 +3,7 @@ const requestRouter = express.Router()
 
 const { userAuth } = require("../middlewares/auth.js")
 const ConnectionRequest = require("../models/connectionRequest.js")
+const User = require("../models/user.js")
 
 requestRouter.post("/request/send/:status/:userId", userAuth, async (req, res) => {
     try {
@@ -19,7 +20,7 @@ requestRouter.post("/request/send/:status/:userId", userAuth, async (req, res) =
         }
 
         //corner-case : 2
-        const isUserAvailableInDB = await ConnectionRequest.findById({ toUserId })
+        const isUserAvailableInDB = await User.findById(toUserId)
         if (!isUserAvailableInDB) {
             return res.status(400).json({
                 message: "User is not available"
@@ -66,7 +67,7 @@ requestRouter.post("/request/review/:status/:requestId", userAuth, async (req, r
             return res.status(400).send({ message: "Invalid status : " + status })
         }
 
-        const connectionRequest = await ConnectionRequest.find({
+        const connectionRequest = await ConnectionRequest.findOne({
             _id: requestId,
             toUserId: loggedInUser._id,
             status: "interested"

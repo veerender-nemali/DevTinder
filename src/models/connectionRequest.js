@@ -28,7 +28,7 @@ const connectionRequestSchema = new mongoose.Schema(
 connectionRequestSchema.index({ firstName: 1, lastName: 1 })
 
 //this is a middleware, it gets executed before data is being stored in DB
-connectionRequestSchema.pre("save", function () {
+connectionRequestSchema.pre("save", function (next) {
     const connectionRequest = this
 
     if (connectionRequest.fromUserId.equals(connectionRequest.toUserId)) {
@@ -38,6 +38,6 @@ connectionRequestSchema.pre("save", function () {
     next()
 })
 
-const ConnectionRequestModel = new mongoose("ConnectionRequest", connectionRequestSchema)
+const ConnectionRequestModel = mongoose.model("ConnectionRequest", connectionRequestSchema)
 
 module.exports = ConnectionRequestModel
