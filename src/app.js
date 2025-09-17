@@ -5,9 +5,14 @@ const authRouter = require("./routes/auth.js")
 const profileRouter = require("./routes/profile.js")
 const requestRouter = require("./routes/request.js")
 const userRouter = require("./routes/user.js")
+const cors = require("cors")
 
 const app = express()
 
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}))
 app.use(express.json()) //this will convert incoming data which is in json format into js object and handsover to req.body
 app.use(cookieParser())
 
