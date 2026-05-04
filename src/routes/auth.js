@@ -26,9 +26,15 @@ authRouter.post("/signup", async (req, res) => {
         //creating a new instance of a user model
         const user = new User({ firstName, lastName, emailId, password: passwordHash, gender, age }) //req.body => has js object
 
+        const savedUser = await user.save()
+        const token = await savedUser.getJWT()
 
-        await user.save()
-        res.send("User data saved successfully")
+        const userData = savedUser.toObject()
+        delete userData.password
+
+        res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) })
+
+        res.send({ message: "User data saved successfully", data: userData })
     } catch (err) {
         res.status(400).send("Error : " + err.message)
     }

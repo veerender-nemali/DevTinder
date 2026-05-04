@@ -25,17 +25,17 @@ const connectionRequestSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-connectionRequestSchema.index({ firstName: 1, lastName: 1 })
+connectionRequestSchema.index({ fromUserId: 1, toUserId: 1 })
 
 //this is a middleware, it gets executed before data is being stored in DB
-connectionRequestSchema.pre("save", function (next) {
+connectionRequestSchema.pre("save", async function (next) {
     const connectionRequest = this
 
     if (connectionRequest.fromUserId.equals(connectionRequest.toUserId)) {
-        throw new Error("Connot send connection request to yourseld!")
+        throw new Error("Cannot send connection request to yourself!")
     }
 
-    next()
+    // next()
 })
 
 const ConnectionRequestModel = mongoose.model("ConnectionRequest", connectionRequestSchema)

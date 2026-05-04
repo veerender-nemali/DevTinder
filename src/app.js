@@ -5,13 +5,14 @@ const authRouter = require("./routes/auth.js")
 const profileRouter = require("./routes/profile.js")
 const requestRouter = require("./routes/request.js")
 const userRouter = require("./routes/user.js")
+require("dotenv").config();
 const cors = require("cors")
 
 const app = express()
 
 app.use(cors({
     origin: "http://localhost:5173",
-    credentials: true
+    credentials: true,
 }))
 app.use(express.json()) //this will convert incoming data which is in json format into js object and handsover to req.body
 app.use(cookieParser())
@@ -28,6 +29,7 @@ connectDB()
         app.listen(5555, () => {
             console.log("listening on port 5555");
         })
-    }).catch(() => {
-        console.log("Database is not connected")
+    }).catch((err) => {
+        console.error("Database connection failed:", err.message)
+        process.exit(1)
     })

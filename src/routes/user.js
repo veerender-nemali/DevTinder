@@ -5,14 +5,16 @@ const { userAuth } = require("../middlewares/auth")
 const ConnectionRequest = require("../models/connectionRequest")
 const User = require("../models/user")
 
-userRouter.get("/user/requests/recieved", userAuth, async (req, res) => {
+const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills";
+
+userRouter.get("/user/requests/received", userAuth, async (req, res) => {
     try {
         const loggedInUser = req.user
 
         const connectionRequestes = await ConnectionRequest.find({
             toUserId: loggedInUser._id,
             status: "interested"
-        }).populate("fromUserId", "firstName lastName")
+        }).populate("fromUserId", USER_SAFE_DATA)
 
         if (!connectionRequestes) {
             return res.status(400).send("No Connection Requests!")
@@ -34,8 +36,8 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
                 { fromUserId: loggedInUser._id, status: "accepted" },
                 { toUserId: loggedInUser._id, status: "accepted" }
             ]
-        }).populate("fromUserId", "firstName lastName")
-            .populate("toUserId", "firstName lastName")
+        }).populate("fromUserId", USER_SAFE_DATA)
+            .populate("toUserId", USER_SAFE_DATA)
 
         if (!connections) {
             return res.status(400).send({ messsage: "No Connections!" })
@@ -84,7 +86,7 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
                 { _id: { $nin: Array.from(hideUsersFromFeed) } },
                 { _id: { $ne: loggedInUser._id } }
             ]
-        }).select("firstName lastName").skip(skip).limit(limit)
+        }).select(USER_SAFE_DATA).skip(skip).limit(limit)
 
         res.json({
             message: "User Feed!",

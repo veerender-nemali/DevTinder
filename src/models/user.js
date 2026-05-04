@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
             type: String,
             validate(val) {
                 if (!validator.isStrongPassword(val)) {
-                    throw new Error("password is not strong : " + value)
+                    throw new Error("password is not strong : " + val)
                 }
             }
         },
@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
             trim: true,
             validate(val) {
                 if (!validator.isEmail(val)) {
-                    throw new Error("Invalid email Id : " + value)
+                    throw new Error("Invalid email Id : " + val)
                 }
             }
         },

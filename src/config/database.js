@@ -1,7 +1,12 @@
 const mongoose = require("mongoose")
 
 const connectDB = async () => {
-    await mongoose.connect("mongodb+srv://lazyCoder:xxxwUTDLhT3IqjVf@namastenode.ydqbwmu.mongodb.net/devTinder")
+    try {
+        await mongoose.connect(process.env.MONGODB_URI)
+    } catch (error) {
+        console.error("Database connection error:", error.message)
+        throw error
+    }
 }
 
 module.exports = connectDB
