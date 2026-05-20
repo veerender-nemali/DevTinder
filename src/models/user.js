@@ -75,8 +75,13 @@ const userSchema = new mongoose.Schema(
 
 userSchema.methods.getJWT = async function () {
     const user = this
+    const jwtSecret = process.env.JWT_SECRET
 
-    const token = await jwt.sign({ _id: user._id }, "DEVTinder2001@$", { expiresIn: "7d" })
+    if (!jwtSecret) {
+        throw new Error("JWT secret is not configured")
+    }
+
+    const token = await jwt.sign({ _id: user._id }, jwtSecret, { expiresIn: "7d" })
 
     return token
 }

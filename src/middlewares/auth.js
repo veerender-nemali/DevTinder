@@ -9,7 +9,12 @@ const userAuth = async (req, res, next) => {
             return res.status(401).send("Please login!")
         }
 
-        const decodedMessage = await jwt.verify(token, "DEVTinder2001@$")
+        const jwtSecret = process.env.JWT_SECRET
+        if (!jwtSecret) {
+            throw new Error("JWT secret is not configured")
+        }
+
+        const decodedMessage = await jwt.verify(token, jwtSecret)
 
         const { _id } = decodedMessage
 
