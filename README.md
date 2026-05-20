@@ -207,22 +207,8 @@ JWT_SECRET=your-secure-jwt-secret
 * Route-level authentication middleware
 * CORS restricted to the configured frontend origin
 
-## Challenges Faced
-
-* Designing request state transitions for connection flow
-* Preventing duplicate or self-sent connection requests
-* Balancing feed logic to exclude already-connected or requested users
-* Ensuring secure JWT handling across login and protected routes
-
 ## Deployment
 
-This backend can be deployed to : 
+This backend is deployed to : 
 * AWS EC2 instance
 
-## Learning Outcomes
-
-* Implemented secure authentication with JWT and cookie handling
-* Built REST APIs for user and connection workflows
-* Modeled MongoDB documents with Mongoose and enforced validation
-* Created middleware for authentication and request handling
-* Designed backend flow for a matchmaking-style social app
