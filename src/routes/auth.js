@@ -1,75 +1,88 @@
-const express = require("express")
-const authRouter = express.Router()
+const express = require("express");
+const authRouter = express.Router();
 
-const { validateSignUpData } = require("../utils/validation")
-const bcrypt = require("bcrypt")
-const User = require("../models/user")
+const { validateSignUpData } = require("../utils/validation");
+const bcrypt = require("bcrypt");
+const User = require("../models/user");
 
 //storing data in DB from user
 authRouter.post("/signup", async (req, res) => {
-    try {
-        //validation
-        validateSignUpData(req)
+  try {
+    //validation
+    validateSignUpData(req);
 
-        const { firstName, lastName, emailId, password, gender, age } = req.body
+    const { firstName, lastName, emailId, password, gender, age } = req.body;
 
-        const isUserExist = await User.findOne({
-            emailId: emailId
-        })
-        if (isUserExist) {
-            return res.send("User already exists")
-        }
-
-        //encrypting password
-        const passwordHash = await bcrypt.hash(password, 10)
-
-        //creating a new instance of a user model
-        const user = new User({ firstName, lastName, emailId, password: passwordHash, gender, age }) //req.body => has js object
-
-        const savedUser = await user.save()
-        const token = await savedUser.getJWT()
-
-        const userData = savedUser.toObject()
-        delete userData.password
-
-        res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) })
-
-        res.send({ message: "User data saved successfully", data: userData })
-    } catch (err) {
-        res.status(400).send("Error : " + err.message)
+    const isUserExist = await User.findOne({
+      emailId: emailId,
+    });
+    if (isUserExist) {
+      return res.send("User already exists");
     }
-})
 
-authRouter.post('/login', async (req, res) => {
-    try {
-        const { emailId, password } = req.body
+    //encrypting password
+    const passwordHash = await bcrypt.hash(password, 10);
 
-        const user = await User.findOne({ emailId: emailId })
-        if (!user) {
-            throw new Error("Invalid credentials")
-        }
+    //creating a new instance of a user model
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash,
+      gender,
+      age,
+    }); //req.body => has js object
 
-        const isPasswordValid = await user.validatePassword(password) //validatePassword() comes from user.js
+    const savedUser = await user.save();
+    const token = await savedUser.getJWT();
 
-        if (isPasswordValid) {
-            //creating a JWT token  
-            const token = await user.getJWT() //this getJWT() comes from user.js file
+    const userData = savedUser.toObject();
+    delete userData.password;
 
-            res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) })
-            res.send({ message: "Login successful!", data: user })
-        } else {
-            throw new Error("Invalid credentials")
-        }
-    } catch (error) {
-        res.status(400).send("Error : " + error.message)
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 8 * 3600000),
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+    res.send({ message: "User data saved successfully", data: userData });
+  } catch (err) {
+    res.status(400).send("Error : " + err.message);
+  }
+});
+
+authRouter.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
+
+    const user = await User.findOne({ emailId: emailId });
+    if (!user) {
+      throw new Error("Invalid credentials");
     }
-})
+
+    const isPasswordValid = await user.validatePassword(password); //validatePassword() comes from user.js
+
+    if (isPasswordValid) {
+      //creating a JWT token
+      const token = await user.getJWT(); //this getJWT() comes from user.js file
+
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 * 3600000),
+      });
+      res.send({ message: "Login successful!", data: user });
+    } else {
+      throw new Error("Invalid credentials");
+    }
+  } catch (error) {
+    res.status(400).send("Error : " + error.message);
+  }
+});
 
 authRouter.post("/logout", async (req, res) => {
-    res.cookie("token", null, {
-        expires: new Date(Date.now())
-    })
-    res.send("Logout Successful!")
-})
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+  });
+  res.send("Logout Successful!");
+});
 
-module.exports = authRouter
+module.exports = authRouter;
