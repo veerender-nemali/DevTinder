@@ -16,7 +16,6 @@ app.use(
     origin: process.env.FRONTEND_URL,
     credentials: true,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 app.use(express.json()); //this will convert incoming data which is in json format into js object and handsover to req.body
