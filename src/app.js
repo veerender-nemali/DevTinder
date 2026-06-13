@@ -1,35 +1,39 @@
-const express = require("express")
-const connectDB = require("./config/database.js")
-const cookieParser = require("cookie-parser")
-const authRouter = require("./routes/auth.js")
-const profileRouter = require("./routes/profile.js")
-const requestRouter = require("./routes/request.js")
-const userRouter = require("./routes/user.js")
+const express = require("express");
+const connectDB = require("./config/database.js");
+const cookieParser = require("cookie-parser");
+const authRouter = require("./routes/auth.js");
+const profileRouter = require("./routes/profile.js");
+const requestRouter = require("./routes/request.js");
+const userRouter = require("./routes/user.js");
 require("dotenv").config();
-const cors = require("cors")
+const cors = require("cors");
 
-const app = express()
+const app = express();
+const PORT = process.env.PORT || 5555;
 
-app.use(cors({
-    origin: "http://localhost:5173",
+app.use(
+  cors({
+    origin: ["http://localhost:5173", process.env.FRONTEND_URL],
     credentials: true,
-}))
-app.use(express.json()) //this will convert incoming data which is in json format into js object and handsover to req.body
-app.use(cookieParser())
+  }),
+);
+app.use(express.json()); //this will convert incoming data which is in json format into js object and handsover to req.body
+app.use(cookieParser());
 
-app.use("/", authRouter)
-app.use("/", profileRouter)
-app.use("/", requestRouter)
-app.use("/", userRouter)
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestRouter);
+app.use("/", userRouter);
 
 connectDB()
-    .then(() => {
-        console.log("Database is now connected")
+  .then(() => {
+    console.log("Database is now connected");
 
-        app.listen(5555, () => {
-            console.log("listening on port 5555");
-        })
-    }).catch((err) => {
-        console.error("Database connection failed:", err.message)
-        process.exit(1)
-    })
+    app.listen(PORT, () => {
+      console.log(`Listening on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Database connection failed:", err.message);
+    process.exit(1);
+  });
