@@ -13,8 +13,9 @@ const PORT = process.env.PORT || 5555;
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", process.env.FRONTEND_URL],
+    origin: process.env.FRONTEND_URL,
     credentials: true,
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
   }),
 );
 app.use(express.json()); //this will convert incoming data which is in json format into js object and handsover to req.body
